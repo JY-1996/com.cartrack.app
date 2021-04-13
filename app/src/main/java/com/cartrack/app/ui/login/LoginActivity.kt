@@ -1,6 +1,7 @@
 package com.cartrack.app.ui.login
 
 import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -10,11 +11,13 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.*
-import androidx.databinding.DataBindingUtil
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ProgressBar
+import android.widget.Toast
+import com.cartrack.app.ui.detail.ItemListActivity
 
 import com.cartrack.app.R
-import com.cartrack.app.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
 
@@ -23,70 +26,61 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding: ActivityLoginBinding =
-            DataBindingUtil.setContentView(this@LoginActivity, R.layout.activity_login)
+        setContentView(R.layout.activity_login)
 
-        loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
-        binding.item = loginViewModel
+        val username = findViewById<EditText>(R.id.username)
+        val password = findViewById<EditText>(R.id.password)
+        val login = findViewById<Button>(R.id.login)
+        val loading = findViewById<ProgressBar>(R.id.loading)
 
-        binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                when (position) {
-                    0 -> {
-
-                    }
-                    1 -> {
-
-                    }
-                }
-
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
+        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
+            .get(LoginViewModel::class.java)
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer
 
             // disable login button unless both username / password is valid
-            binding.login.isEnabled = loginState.isDataValid
+            login.isEnabled = loginState.isDataValid
 
             if (loginState.usernameError != null) {
-                binding.username.error = getString(loginState.usernameError)
+                username.error = getString(loginState.usernameError)
             }
             if (loginState.passwordError != null) {
-                binding.password.error = getString(loginState.passwordError)
+                password.error = getString(loginState.passwordError)
             }
         })
 
         loginViewModel.loginResult.observe(this@LoginActivity, Observer {
             val loginResult = it ?: return@Observer
 
-            binding.loading.visibility = View.GONE
+            loading.visibility = View.GONE
             if (loginResult.error != null) {
                 showLoginFailed(loginResult.error)
             }
             if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
             }
+
+            val intent = Intent(this@LoginActivity, ItemListActivity::class.java)
+            startActivity(intent)
             setResult(Activity.RESULT_OK)
 
             //Complete and destroy login activity once successful
             finish()
         })
 
-        binding.username.afterTextChanged {
+        username.afterTextChanged {
             loginViewModel.loginDataChanged(
-                binding.username.text.toString(),
-                binding.password.text.toString()
+                username.text.toString(),
+                password.text.toString()
             )
         }
 
-        binding.password.apply {
+        password.apply {
             afterTextChanged {
                 loginViewModel.loginDataChanged(
-                    binding.username.text.toString(),
-                    binding.password.text.toString()
+                    username.text.toString(),
+                    password.text.toString()
                 )
             }
 
@@ -94,19 +88,16 @@ class LoginActivity : AppCompatActivity() {
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
                         loginViewModel.login(
-                            binding.username.text.toString(),
-                            binding.password.text.toString()
+                            username.text.toString(),
+                            password.text.toString()
                         )
                 }
                 false
             }
 
-            binding.login.setOnClickListener {
-                binding.loading.visibility = View.VISIBLE
-                loginViewModel.login(
-                    binding.username.text.toString(),
-                    binding.password.text.toString()
-                )
+            login.setOnClickListener {
+                loading.visibility = View.VISIBLE
+                loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }
     }
