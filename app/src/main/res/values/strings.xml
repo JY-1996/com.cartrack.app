@@ -19,4 +19,8 @@
         <item name="sg">Singapore</item>
         <item name="msia">Malaysia</item>
     </string-array>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
 </resources>
