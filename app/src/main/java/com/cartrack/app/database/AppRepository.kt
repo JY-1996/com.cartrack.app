@@ -2,10 +2,10 @@ package com.cartrack.app.database
 
 import androidx.lifecycle.LiveData
 
-class AppRepository( private val appDatabase: AppDatabase) {
+class AppRepository( private val appDao: AppDao) {
 
-    val getAll: LiveData<List<Entity>> = appDatabase.Dao().getAll()
-    suspend fun insert(username:String, country:String,password: String) = appDatabase.Dao().insert(username, country, password)
+    val getAll: LiveData<List<Entity>> = appDao.getAll()
+    suspend fun insert(entity:Entity) = appDao.insert(entity)
 
-    suspend fun checkUser(username:String, password: String) = appDatabase.Dao().checkUser(username, password)
+    suspend fun checkUser(username:String, password: String) = appDao.checkUser(username, password)
 }
