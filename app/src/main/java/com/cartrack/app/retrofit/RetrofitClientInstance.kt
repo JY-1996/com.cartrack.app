@@ -6,7 +6,6 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -29,9 +28,7 @@ object RetrofitClientInstance {
             .readTimeout(10, TimeUnit.SECONDS)
         val retro = Retrofit.Builder()
             .baseUrl(url)
-//                .addConverterFactory(serializationConverterFactory(MediaType.parse("application/json; charset=utf-8")!!, JSON))
             .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .client(builder.build())
             .build()
 
