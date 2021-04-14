@@ -1,27 +1,18 @@
 package com.cartrack.app.ui.detail
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.cartrack.app.R
-import com.cartrack.app.data.detail.UserContent.User
 import com.cartrack.app.data.detail.UserContent.ITEM_MAP
+import com.cartrack.app.data.detail.UserContent.User
+import com.google.android.material.appbar.CollapsingToolbarLayout
 
-/**
- * A fragment representing a single Item detail screen.
- * This fragment is either contained in a [ItemListActivity]
- * in two-pane mode (on tablets) or a [ItemDetailActivity]
- * on handsets.
- */
 class ItemDetailFragment : Fragment() {
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
     private var item: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,14 +20,12 @@ class ItemDetailFragment : Fragment() {
 
         arguments?.let {
             if (it.containsKey(ARG_ITEM_ID)) {
-                // Load the dummy content specified by the fragment
-                // arguments. In a real-world scenario, use a Loader
-                // to load content from a content provider.
                 item = ITEM_MAP[it.getInt(ARG_ITEM_ID)]
                 activity?.findViewById<CollapsingToolbarLayout>(R.id.toolbar_layout)?.title =
-                    item?.email
+                    item?.name
             }
         }
+
     }
 
     override fun onCreateView(
@@ -45,19 +34,31 @@ class ItemDetailFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.item_detail, container, false)
 
-        // Show the dummy content as text in a TextView.
         item?.let {
-            rootView.findViewById<TextView>(R.id.item_detail).text = it.email
+            rootView.findViewById<TextView>(R.id.name).text = it.name
+            rootView.findViewById<TextView>(R.id.username).text = it.username
+            rootView.findViewById<TextView>(R.id.email).text = it.email
+            rootView.findViewById<TextView>(R.id.street).text = it.address.street
+            rootView.findViewById<TextView>(R.id.suite).text = it.address.suite
+            rootView.findViewById<TextView>(R.id.city).text = it.address.city
+            rootView.findViewById<TextView>(R.id.zipcode).text = it.address.zipcode
+            rootView.findViewById<TextView>(R.id.geo).text = requireContext().resources.getString(R.string.list,it.address.geo.lat,it.address.geo.lng)
+            rootView.findViewById<TextView>(R.id.phone).text = it.phone
+            rootView.findViewById<TextView>(R.id.website).text = it.email
+            rootView.findViewById<TextView>(R.id.companyname).text = it.name
+            rootView.findViewById<TextView>(R.id.catchPhase).text = it.username
+            rootView.findViewById<TextView>(R.id.bs).text = it.email
         }
 
         return rootView
     }
 
     companion object {
-        /**
-         * The fragment argument representing the item ID that this fragment
-         * represents.
-         */
+
         const val ARG_ITEM_ID = "item_id"
+        const val ARG_LAT = "lat"
+        const val ARG_LNG = "lng"
+        const val ARG_CITY = "city"
+
     }
 }

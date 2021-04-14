@@ -12,17 +12,10 @@ import retrofit2.Response
 
 class DetailViewModel(private val repository: DetailRepository): ViewModel() {
     var detail: MutableLiveData<Response<List<User>>> = MutableLiveData()
-    var detail2: MutableLiveData<Response<ResponseBody>> = MutableLiveData()
     fun getDetail() {
         viewModelScope.launch (Dispatchers.IO){
             val response = repository.getDetail()
-            detail.value = response
-        }
-    }
-    fun getDetail2() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val response = repository.getDetail2()
-            detail2.value = response
+            detail.postValue(response)
         }
     }
 }
