@@ -1,7 +1,5 @@
 package com.cartrack.app.data.detail
 
-import org.json.JSONObject
-
 object UserContent {
 
     val ITEM_MAP: MutableMap<Int, User> = HashMap()
@@ -13,9 +11,26 @@ object UserContent {
         val phone: String,
         val website: String,
         val email: String,
-        val address: JSONObject,
-        val company: JSONObject
-    ) {
-//        override fun toString(): String = content
-    }
+        val address: Address,
+        val company: Company
+    )
+
+    data class Address(
+        val street: String,
+        val suite: String,
+        val city: String,
+        val zipcode: String,
+        val geo: Geo
+    )
+
+    data class Company(
+        val name: String,
+        val catchPhrase: String,
+        val bs: String
+    )
+
+    data class Geo(
+        val lat: String,
+        val lng: String
+    )
 }
